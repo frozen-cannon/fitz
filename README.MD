@@ -21,6 +21,14 @@ Features
 | soft | Remove atrocities like `spaces` and (god forbids) `emojis`, and anything that isn't a alphanumeric, `-` or `_` character |
 | fix | Automatically enforce a convention |
 
+This feature will include general rules for specific names regardless of the naming convention used, for example:
+
+`readme.md` -> `README.md`  
+`cargo.toml` -> `Cargo.toml`  
+`License.md` -> `LICENSE.md`  
+
+to name a few
+
 ## File gatherer by extension
 
 Search a directory for all the files with a extension and moves them into a folder
