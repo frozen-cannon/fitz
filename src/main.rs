@@ -1,5 +1,5 @@
-use core::time;
-use std::{env, process, thread};
+mod dummy;
+use std::{env, process};
 
 fn main() {
     let path = env::current_dir().unwrap_or_else(|err| {
@@ -29,7 +29,7 @@ fn main() {
     println!("Looking for {command_name} command on the command list");
 
     match command_name {
-        val if val == "dummy".to_owned() => base(args.clone()),
+        val if val == "dummy".to_owned() => dummy::dummy::base(&path, args.clone()),
         _ => {
             terminate(ArgumentError::ToFew);
         }
@@ -39,21 +39,6 @@ fn main() {
 struct Command<'a> {
     call_name: &'a str,
     help_message: &'a str,
-}
-
-fn base(mut args: Vec<String>) {
-    args.drain(0..2);
-    println!(
-        "Running dummy command with the following args: {}",
-        args.len()
-    );
-    for arg in args {
-        println!("{arg}");
-    }
-
-    println!("Dummy command doing dummy things...");
-    thread::sleep(time::Duration::from_secs(5));
-    println!("Dummy command has finished doing things")
 }
 
 fn terminate(err: ArgumentError) {
@@ -66,6 +51,7 @@ fn terminate(err: ArgumentError) {
         }
     }
 }
+
 enum ArgumentError {
     ToMany,
     ToFew,
