@@ -1,31 +1,75 @@
-use std::{
-    env::{self},
-    process,
-};
+use core::time;
+use std::{env, process, thread};
 
 fn main() {
     let path = env::current_dir().unwrap_or_else(|err| {
         eprintln!("Problem while getting the current directory: {}", err);
         process::exit(1);
     });
-    println!("{path:?}");
-
     let args: Vec<String> = env::args().collect();
 
+    let mut commands: Vec<Command> = vec![];
+
+    // Command declaration
+    let base_command: Command = Command {
+        call_name: "dummy",
+        help_message: "dummy command, for testing purposes",
+    };
+    commands.push(base_command);
+
+    if args.len() < 2 {
+        println!("This tool is meant to run any of the following commands:");
+        for command in commands {
+            println!("{}", command.call_name)
+        }
+        process::exit(1);
+    }
+
+    let command_name = args[1].clone();
+    println!("Looking for {command_name} command on the command list");
+
+    match command_name {
+        val if val == "dummy".to_owned() => base(args.clone()),
+        _ => {
+            terminate(ArgumentError::ToFew);
+        }
+    }
+}
+
+struct Command<'a> {
+    call_name: &'a str,
+    help_message: &'a str,
+}
+
+fn base(mut args: Vec<String>) {
+    args.drain(0..2);
+    println!(
+        "Running dummy command with the following args: {}",
+        args.len()
+    );
     for arg in args {
-        println!("{arg}")
+        println!("{arg}");
     }
 
-    Command::help();
+    println!("Dummy command doing dummy things...");
+    thread::sleep(time::Duration::from_secs(5));
+    println!("Dummy command has finished doing things")
 }
 
-struct Command {
-    pub name: String,
-    pub description: String,
-}
-
-impl Command {
-    fn help() -> String {
-        format!("Thanks for using fits")
+fn terminate(err: ArgumentError) {
+    match err {
+        ArgumentError::ToFew => {
+            panic!("Error, not enough arguments for this function!")
+        }
+        ArgumentError::ToMany => {
+            panic!("Error, too many arguments for this function!")
+        }
     }
 }
+enum ArgumentError {
+    ToMany,
+    ToFew,
+}
+
+// TODO: Make a parse function for the args that parse args like this:
+// if it start with no hyphen `-` then is
