@@ -1,19 +1,27 @@
 pub mod dummy {
-    use std::{path::PathBuf, thread, time};
+    use crate::{CommandArgs, CommandParam};
 
-    pub fn base(path: &PathBuf, mut args: Vec<String>) {
-        args.drain(0..2);
-        println!("{path:?}");
-        println!(
-            "Running dummy command with the following args: {}",
-            args.len()
-        );
-        for arg in args {
-            println!("{arg}");
-        }
+    pub fn base(args: Vec<String>) {
+        // Define all the arguments and params for this command
+        let mut arguments: Vec<CommandArgs> = vec![];
+        let mut params: Vec<CommandParam> = vec![];
 
-        println!("Dummy command doing dummy things...");
-        thread::sleep(time::Duration::from_secs(5));
-        println!("Dummy command has finished doing things")
+        let help = CommandArgs {
+            arg_name: "--help".to_string(),
+            // is_required: false,
+            // require_params: false,
+            help_message: "Says 'hi <name>'".to_string(),
+        };
+
+        let name_arg: CommandParam = CommandParam {
+            param_name: "name".to_string(),
+            is_required: true,
+        };
+
+        // Add them to the list of accepted arguments
+        arguments.push(help);
+        params.push(name_arg);
+
+        // let required_arg_total = args.iter().find(|x| {x})
     }
 }

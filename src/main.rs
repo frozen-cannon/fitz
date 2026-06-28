@@ -1,19 +1,19 @@
+mod arg_parser;
 mod dummy;
 use std::{env, process};
 
 fn main() {
-    let path = env::current_dir().unwrap_or_else(|err| {
-        eprintln!("Problem while getting the current directory: {}", err);
-        process::exit(1);
-    });
-    let args: Vec<String> = env::args().collect();
+    // let path = env::current_dir().unwrap_or_else(|err| {
+    //     eprintln!("Problem while getting the current directory: {}", err);
+    //     process::exit(1);
+    // });
+    let mut args: Vec<String> = env::args().collect();
 
     let mut commands: Vec<Command> = vec![];
 
     // Command declaration
     let base_command: Command = Command {
-        call_name: "dummy",
-        help_message: "dummy command, for testing purposes",
+        call_name: "dummy".to_string(),
     };
     commands.push(base_command);
 
@@ -24,21 +24,20 @@ fn main() {
         }
         process::exit(1);
     }
-
     let command_name = args[1].clone();
     println!("Looking for {command_name} command on the command list");
 
+    args.drain(0..2);
     match command_name {
-        val if val == "dummy".to_owned() => dummy::dummy::base(&path, args.clone()),
+        val if val == "dummy".to_owned() => dummy::dummy::base(args.clone()),
         _ => {
             terminate(ArgumentError::ToFew);
         }
     }
 }
 
-struct Command<'a> {
-    call_name: &'a str,
-    help_message: &'a str,
+struct Command {
+    call_name: String,
 }
 
 fn terminate(err: ArgumentError) {
@@ -59,3 +58,14 @@ enum ArgumentError {
 
 // TODO: Make a parse function for the args that parse args like this:
 // if it start with no hyphen `-` then is
+
+struct CommandArgs {
+    arg_name: String,
+    // is_required: bool,
+    // require_params: bool,
+    help_message: String,
+}
+struct CommandParam {
+    param_name: String,
+    is_required: bool,
+}
